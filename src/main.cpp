@@ -3,8 +3,12 @@
 
 String username = "";
 String inputstr = "";
+String firstval = "";
+String secondval = "";
 bool usernamecomplete = true;
 bool stringComplete = false;
+bool firstv = true;
+bool secv = true;
 int commandMaxLen = 20;
 int status=WL_IDLE_STATUS;
 char ssid[]="urssid";
@@ -60,11 +64,20 @@ void cmdProc(String cmd){
 	if(usernamecomplete){
     Serial.print("Hello ");
     Serial.println(cmd);
-    Serial.println("What do u want from me?");
+    Serial.print("Print first value ");
+		Serial.println(username);
     usernamecomplete=false;
     stringComplete=false;
-    commandMaxLen = 2;
    }
+	else if(firstv){
+		firstval=cmd;
+		firstv=false;
+		Serial.println("And other");
+	}
+	else if (secv){
+		secondval=cmd;
+		secv=false;
+	}
 
   else{
     sentf(inputstr);
@@ -76,8 +89,11 @@ void sentf(String ara){
     client.connect(servername, 80);
   }
   client.print("GET /v1/x4.html?device=3&event=");
-  client.print(ara[0]);
+  client.print(firstval);
   client.print("&status=");
-  client.println(ara[1]);
+  client.println(secondval);
   Serial.println("Already^_^");
+  client.stop();
+	firstv=true;
+	secv=true;
 }
