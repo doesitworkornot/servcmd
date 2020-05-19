@@ -74,10 +74,12 @@ void cmdProc(String cmd){
 void sentf(String ara){
   while(!client.connected()){
     client.connect(servername, 80);
+    delay(100);
   }
   client.print("GET /v1/x4.html?device=3&event=");
   client.print(ara[0]);
   client.print("&status=");
   client.println(ara[1]);
+  client.stop();
   Serial.println("Already^_^");
 }
