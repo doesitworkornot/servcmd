@@ -1,15 +1,11 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-String username = "";
-String inputstr = "";
-String firstval = "";
-String secondval = "";
-bool usernamecomplete = true;
-bool stringComplete = false;
-bool firstv = true;
-bool secv = true;
-int commandMaxLen = 20;
+String username;
+String inputstr;
+String outputstr;
+bool stringComplete=false;
+int commandMaxLen=20;
 int status=WL_IDLE_STATUS;
 char ssid[]="urssid";
 char password[]="urpassword";
@@ -22,78 +18,64 @@ WiFiClient client;
 void setup(){
 	Serial.begin(9600);
   while (status != WL_CONNECTED){
-    status=WiFi.begin(ssid, password);
+  	status=WiFi.begin(ssid, password);
     delay(1000);
-}
+	  }
   Serial.println("It's workin'");
   Serial.println("Only for u <3");
-  Serial.println("How do u want to be called");
-}
+  }
 
 void loop(){
-   if (Serial.available()){
-     serialEvent();
-    }
-   if (stringComplete){
-  		cmdProc(inputstr);
-  		inputstr = "";
-  		stringComplete = false;
-    }
- }
+	if (Serial.available()){
+  	serialEvent();
+	  }
+	if (stringComplete){
+  	cmdProc(inputstr);
+  	inputstr = "";
+  	stringComplete = false;
+	  }
+  }
 
 void serialEvent(){
- 	while (Serial.available()){
+	while (Serial.available()){
  		char inChar = (char)Serial.read();
  		Serial.print(inChar);
  		if (inChar == '\n'){
  			stringComplete = true;
- 		 }
+ 		  }
     else{
  			if (inputstr.length() < commandMaxLen){
  				inputstr += inChar;
- 			 }
+ 			  }
       else{
-         stringComplete = true;
-       }
- 		 }
- 	}
-}
+      	stringComplete = true;
+      	}
+		 	}
+	  }
+  }
 
 void cmdProc(String cmd){
 	cmd.trim();
-	if(usernamecomplete){
-    Serial.print("Hello ");
-    Serial.println(cmd);
-    Serial.print("Print first value ");
-		Serial.println(username);
-    usernamecomplete=false;
-    stringComplete=false;
-   }
-	else if(firstv){
-		firstval=cmd;
-		firstv=false;
-		Serial.println("And other");
-	}
-	else if (secv){
-		secondval=cmd;
-		secv=false;
-	}
-
-  else{
-    sentf(inputstr);
+	if(cmd.startsWith("sent")){
+		sentf(cmd);
+	  }
+	else if(cmd.startsWith("disconnect")){
+		WiFi.disconnect();
+		Serial.println("Disconnected");
+	  }
   }
-}
 
 void sentf(String ara){
+	client.stop();
   while(!client.connected()){
     client.connect(servername, 80);
-  }
+		delay(100);
+		Serial.println("connecting to site");
+    }
   client.print("GET /v1/x4.html?device=3&event=");
-  client.print(firstval);
+  client.print(ara[5]);
+	Serial.println(ara[5]);
   client.print("&status=");
-  client.println(secondval);
-  Serial.println("Already^_^");
-  client.stop();
-	firstv=true;
-	secv=true;
-}
+  client.println(ara[7]);
+	Serial.println(ara[7]);
+	}
