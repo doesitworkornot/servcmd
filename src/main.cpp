@@ -1,3 +1,10 @@
+//На вход даются две команды
+//"sent x y", где x, y числа 0-9, которые нужно вывести на сайт
+//"disconnect" просто отключается от сети WiFi
+//Строчки "urssid" и "password" нужно заполнить лично
+
+
+
 #include <Arduino.h>
 #include <WiFi.h>
 
@@ -74,8 +81,7 @@ void sentf(String ara){
     }
   client.print("GET /v1/x4.html?device=3&event=");
   client.print(ara[5]);
-	Serial.println(ara[5]);
   client.print("&status=");
   client.println(ara[7]);
-	Serial.println(ara[7]);
+	Serial.println("Check it out");
 	}
